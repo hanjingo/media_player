@@ -47,7 +47,7 @@ do
 
     abs_file_path="$dir/${file_map[$idx]}"
     echo "play file:$abs_file_path"
-    ffplay "$abs_file_path"
+    ffplay -autoexit "$abs_file_path"
     
     # flush screen
     printf "\033c"
