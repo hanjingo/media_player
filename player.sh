@@ -34,7 +34,7 @@ do
 done
 
 # reading user input
-while read -p "Enter the index to play:" idx
+while read -p "Enter the index to play (q:quit):" idx
 do 
     case $idx in 
         "q")
@@ -48,4 +48,11 @@ do
     abs_file_path="$dir/${file_map[$idx]}"
     echo "play file:$abs_file_path"
     ffplay "$abs_file_path"
+    
+    # flush screen
+    printf "\033c"
+    for key in ${!file_map[*]}
+    do
+        echo "$key.${file_map[$key]}"
+    done
 done
