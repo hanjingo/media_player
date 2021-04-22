@@ -122,7 +122,7 @@ doDecKey(){
 }
 
 # loop read
-while read -p "Cmd (q:quit, k:end play, l:open single loop, n:next p:prev):" cmd
+while read -p "Cmd (q:quit, k:end play, l:open single loop, n:next, p:prev, f:flush screan ...):" cmd
 do 
     case $cmd in 
         "q")
@@ -154,6 +154,10 @@ do
             doKillPid
             doDecKey
             doPlay
+        ;;
+        "f")
+            doCls
+            doListFile
         ;;
         *)
             if [ -n "`echo $cmd | sed 's/[0-9]//g'`" ]; then
