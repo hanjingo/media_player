@@ -160,6 +160,7 @@ do
             doKillPid
             doCls
             doListFile
+            curr_file=""
             continue
         ;;
         "n")
@@ -182,6 +183,10 @@ do
         *)
             if [ -n "`echo $cmd | sed 's/[0-9]//g'`" ]; then
                 echo "please input valid num!!!"
+                continue
+            fi
+            if [ $curr_file != "" ]; then
+                echo "in playing file, please kill it first!!!"
                 continue
             fi
             let curr_key=$cmd
