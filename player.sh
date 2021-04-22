@@ -1,14 +1,20 @@
 #!/bin/sh
 
 last_dir=/Volumes/DATA/store/music
-dir=$(pwd)
+dir=""
 
 while read -p "Enter media abs path:" dir
 do
-    if [ $dir=="\n" ];then
-        echo "input empty dir, use last input dir:$last_dir"
-        dir=$last_dir
-    fi
+    case $dir in
+        "")
+            echo "input empty dir, use last input dir:$last_dir"
+            dir=$last_dir
+        ;;
+        "\n")
+            echo "input empty dir, use last input dir:$last_dir"
+            dir=$last_dir
+        ;;
+    esac
 
     if [ -f !$dir ];then
         echo -n "dir:$dir not exist, please input again!!!"
@@ -37,8 +43,8 @@ done
 fpid="run.pid"
 curr_file=""
 curr_key=1
-do_single_loop=0
-do_background_play=1
+bsingle_loop=0
+bbackground_play=1
 
 # remove pid file
 doRmPid(){
@@ -67,7 +73,7 @@ doPlay(){
 
     curr_file="$dir/${file_map[$curr_key]}"
 
-    if [ $do_background_play==1 ];then
+    if [ $bbackground_play -eq 1 ];then
         echo "play background file:$curr_file"
         doRmPid
         nohup ffplay -autoexit -nodisp "$curr_file" > /dev/null 2>&1 & echo $! > $fpid
@@ -122,7 +128,7 @@ doDecKey(){
 }
 
 # loop read
-while read -p "Cmd (q:quit, k:end play, l:open single loop, n:next, p:prev, f:flush screan ...):" cmd
+while read -p "(q:quit, k:end play, l:single loop, bg:background, n:next, p:prev, cls:clean screan ...):" cmd
 do 
     case $cmd in 
         "q")
@@ -130,13 +136,23 @@ do
             doClean
             break
         ;;
+        "bg")
+            let bbackground_play=1
+            echo "background play enabled"
+            continue
+        ;;
+        "nbg")
+            let bbackground_play=0
+            echo "background play disenable"
+            continue
+        ;;
         "l")
-            do_single_loop=1
+            bsingle_loop=1
             echo "single loop enabled"
             continue
         ;;
         "nl")
-            do_single_loop=0
+            bsingle_loop=0
             echo "single loop disenable"
             continue
         ;;
@@ -144,20 +160,24 @@ do
             doKillPid
             doCls
             doListFile
+            continue
         ;;
         "n")
             doKillPid
             doIncKey
             doPlay
+            continue
         ;;
         "p")
             doKillPid
             doDecKey
             doPlay
+            continue
         ;;
-        "f")
+        "cls")
             doCls
             doListFile
+            continue
         ;;
         *)
             if [ -n "`echo $cmd | sed 's/[0-9]//g'`" ]; then
@@ -166,6 +186,7 @@ do
             fi
             let curr_key=$cmd
             doPlay
+            continue
         ;;
     esac
 done
